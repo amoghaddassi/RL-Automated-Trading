@@ -1,0 +1,70 @@
+Notes from reading: http://simontechblog.blogspot.com/2010/08/pybrain-reinforcement-learning-tutorial_15.html
+
+Experiment Class:
+
+- Coordinates the interaction between the agent and the environment.
+- Defines what a time period (episode) is.
+- Obtains observation from the environment, agent takes action, environment gives reward and process repeats.
+- Subclasses:
+    - EpisodicExperiment: Creates a conditional stopping point for task.
+    - ContinuousExperiment: When no reset is involved in the task and learning occurs at each interaction.
+
+Task Class:
+- Defines the nature of the task and reward portion (what's a good action and what's bad).
+- Need to write custom Task class for each application.
+
+Environment Class:
+- Manages the input(observations) and output(actions) to an agent.
+- Also need to make a custom class.
+- Methods:
+    -get_sensors(self): determines and returns (generally an array of doubles) the state of the environment.
+    -perform_action(self, action): takes an action from the agent on the environment.
+    -reset(self): can be implemented if you want to reinitialize the environment at some condition.
+
+Agent Class:
+- Module where the learning and interacting occur.
+- Subclasses:
+    - LoggingAgent: Keeps track of all past interactions.
+    - LearningAgent: Subclass that does actual learning. This is the one to use.
+- init parameter defines the learning algorithm:
+    - 'Q'
+    - 'NFQ': Q-learning through a neural net. Much slower that table based Q-learning, but can approximate non-linear functions.
+    - 'Qlambda'
+    - 'SARSA'
+
+Realized PyBrain is super old with poor documentation, switching to OpenAI Gym.
+
+- Gym comes with several built in environments that allow us to evaluate our agent.
+- These environments are all subclasses of the Env base class.
+- env.step(action) takes the specificed action in the environment and returns four values:
+    1. observation (object) - this is an environment specific value that represents the state of the env at the time step,
+    as perceived by the agent.
+    2. reward (float) - magnitudes will vary btw envs, but the goal is always to maximize reward.
+    3. done (bool) - whether an episode in the env is over (eg losing your last life in a video game) and the environment
+    needs to be reset in order to continue training.
+    4. info (dict) - useful for debugging, but should not be used during training.
+- This encodes the agent -> action -> env -> observation, reward loop that is standard in training RL models.
+- Spaces: env objects come with an action_space and observation_space. Discrete and box are the two most common Space types
+
+Plan of attack for trading bot:
+class Environment:
+    def __init__(self)
+    def reset(self): resets the environment to its starting state.
+    def render(self): returns the current state of the environment, represented as some tuple.
+    def step(self, action): registers an action and returns a reward.
+
+class Agent:
+(could also just use a pybrain agent).
+    def __init__(self)
+    def update_Q_vals(self, reward): Updates policy based on past time step's reward.
+    def take_action(self, observation): Takes in an element of the observation space and returns the optimal action given
+    the current policy.
+
+simulation.py:
+    File where the objects will be instantiated and the agent learns.
+    First will create an instance of the agent and environment with the correct parameters.
+    Runs a training loop:
+        First renders the current state.
+        Agent takes an action given that observation.
+        Environment returns a reward for that observation.
+        Update Q-values based on reward and repeat.
