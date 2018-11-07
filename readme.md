@@ -1,1 +1,1 @@
-Reinforcement learning agent for trading in PyBrain.
+Reinforcement learning agent for trading.
