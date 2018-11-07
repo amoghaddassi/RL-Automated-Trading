@@ -1,8 +1,3 @@
-import pandas as pd
-
-path = '/Users/arammoghaddassi/Google Drive/Projects/RL-Automated-Trading/data/'
-aapl = pd.read_csv(path + 'AAPL.csv')
-amzn = pd.read_csv(path + 'AMZN.csv')
 START_CASH = 1000
 
 class Environment:
@@ -55,4 +50,4 @@ class Environment:
 
     def reset(self):
         """Resets the environment to the starting state."""
-        pass
+        self.index = 0
