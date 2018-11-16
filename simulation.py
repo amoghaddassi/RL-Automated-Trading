@@ -1,5 +1,5 @@
 from environment import Environment
-from pybrain3.structure.modules.gaussianlayer import GaussianLayer
+from pybrain3.rl.learners.valuebased import ActionValueNetwork
 from pybrain3.rl.agents.learning import LearningAgent
 from pybrain3.rl.learners.valuebased.nfq import NFQ
 import pandas as pd
@@ -12,10 +12,10 @@ amzn = pd.read_csv(path + 'AMZN.csv')
 n_episodes = 10
 episdoe_length = 30
 
-gaussian_layer = GaussianLayer(2)
-nfq_learner = NFQ()
+controller = ActionValueNetwork(dimState= 1, numActions= 3)#Maps states to actions.
+learner = NFQ() #Does the actual learning, updates values in action value network.
 
-env, agent = Environment(aapl), LearningAgent(gaussian_layer, learner=nfq_learner)
+env, agent = Environment(aapl), LearningAgent(controller, learner=learner)
 
 agent.reset(), env.reset()
 

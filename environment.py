@@ -1,5 +1,9 @@
+import pandas as pd
 #Environment switches
 START_CASH = 1000
+
+path = '/Users/arammoghaddassi/Google Drive/Projects/RL-Automated-Trading/data/'
+aapl = pd.read_csv(path + 'AAPL.csv')
 
 class Environment:
     """Represents the trading environment for an asset with price history data."""
@@ -17,12 +21,13 @@ class Environment:
         """Takes a given action (action should be some integer) in the env, and returns:
         1. next_state: the price of the asset at time t+1
         2. reward: reward associated with the action"""
+        past_balance = self.account_value()
         self.index += 1
         next_state = self.state()
 
-        past_balance = self.account_value()
         self.place_order(action)
-        reward = self.reward(past_balance)
+        new_balance = self.account_value()
+        reward = self.reward(past_balance, new_balance)
 
         return next_state, reward
 
@@ -49,9 +54,9 @@ class Environment:
         """Returns the combined value of cash and stock in the account."""
         return self.cash + self.position * self.state()
 
-    def reward(self, past_balance):
+    def reward(self, past_balance, new_balance):
         """Takes a past balance and evaluates how well the most recent action impacted the balance."""
-        return self.account_value() - past_balance #very simple measure, need to update.
+        return new_balance - past_balance #very simple measure, need to update.
 
     def reset(self):
         """Resets the environment to the starting state."""
